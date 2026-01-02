@@ -7,11 +7,6 @@ const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   useEffect(() => {
-    if (scrolled && isOpen) setIsOpen(false);
-  }, [scrolled, isOpen]);
-
-
-  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
