@@ -1,24 +1,22 @@
 import "./App.css";
+import Footer from "./components/footer/Footer";
 import Navbar from "./components/header/Navbar";
-import Home from "./components/Home";
 import HeroSection from "./components/NewHome";
 import AboutUs from "./components/sections/AboutUs";
-import BookDiagnosticTestForm from "./components/sections/BookDiagnosticTestForm";
+import BookingAppointment from "./components/sections/BookingAppointment";
 import FAQSection from "./components/sections/FAQSection";
 import FeatureSection from "./components/sections/FeatureSection";
 
 function App() {
   return (
     <>
-      {/* <Navbar />
-      <Home />
-      <AboutUs /> */}
       <Navbar />
-      <HeroSection /> 
+      <HeroSection />
       <AboutUs />
       <FeatureSection />
-      <BookDiagnosticTestForm />
+      <BookingAppointment />
       <FAQSection />
+      <Footer />
     </>
   );
 }
