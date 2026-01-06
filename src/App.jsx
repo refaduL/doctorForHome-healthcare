@@ -1,6 +1,6 @@
 import "./App.css";
 import Footer from "./components/footer/Footer";
-import Navbar from "./components/header/NewNavbar";
+import Navbar from "./components/header/Navbar";
 import AboutUs from "./components/sections/AboutUs";
 import BookingAppointment from "./components/sections/BookingAppointment";
 import FAQSection from "./components/sections/FAQSection";

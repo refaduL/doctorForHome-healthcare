@@ -42,7 +42,7 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                  DoctorForHome
+                  DoctorsForHome
                 </h3>
               </div>
             </div>
@@ -123,7 +123,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="mailto:info@doctorforhome.com"
+                  href="mailto:info@doctorsforhome.com"
                   className="flex items-start gap-3 text-slate-400 text-sm hover:text-pink-400 transition-colors duration-300 group"
                 >
                   <Mail className="w-4 h-4 mt-0.5 group-hover:scale-110 transition-transform" />
@@ -145,7 +145,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <p className="text-slate-500 text-sm text-center md:text-left">
-              © 2026 DoctorForHome. All rights reserved.
+              © 2026 DoctorsForHome. All rights reserved.
             </p>
 
             {/* Legal Links */}

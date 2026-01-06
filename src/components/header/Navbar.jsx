@@ -13,9 +13,10 @@ const Navbar = () => {
     if (stored === 'light') {
       document.documentElement.classList.remove('dark');
       setDarkMode(false);
-    } else {
-      document.documentElement.classList.add('dark');
-    }
+    } 
+    // else {
+    //   document.documentElement.classList.add('dark');
+    // }
   }, []);
 
   const toggleTheme = () => {
@@ -66,7 +67,7 @@ const Navbar = () => {
             </div>
             <div>
               <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">
-                DoctorForHome
+                DoctorsForHome
               </h1>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 tracking-wider">
                 HEALTHCARE REIMAGINED
