@@ -118,7 +118,7 @@ const Footer = () => {
                   className="flex items-start gap-3 text-slate-400 text-sm hover:text-pink-400 transition-colors duration-300 group"
                 >
                   <Phone className="w-4 h-4 mt-0.5 group-hover:scale-110 transition-transform" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+880 1628495554</span>
                 </a>
               </li>
               <li>
@@ -127,13 +127,13 @@ const Footer = () => {
                   className="flex items-start gap-3 text-slate-400 text-sm hover:text-pink-400 transition-colors duration-300 group"
                 >
                   <Mail className="w-4 h-4 mt-0.5 group-hover:scale-110 transition-transform" />
-                  <span>info@doctorforhome.com</span>
+                  <span>info@doctorsforhome.com</span>
                 </a>
               </li>
               <li>
                 <div className="flex items-start gap-3 text-slate-400 text-sm">
                   <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>123 Health Street, Medical District, NY 10001</span>
+                  <span>Takwa Chowdhury plaza, Nowa bazar bishwo road mor, PC road Halishahar Chottogram.</span>
                 </div>
               </li>
             </ul>
