@@ -1,6 +1,6 @@
 import { Heart, Shield, Sparkles, TrendingUp, Users } from "lucide-react";
 
-const AboutUs = () => {
+const AboutSection = () => {
   const features = [
     {
       icon: <Users className="w-6 h-6 sm:w-7 sm:h-7" />,
@@ -37,7 +37,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-white dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900">
+    <section id="about" className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-indigo-50 to-white dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900">
       {/* Background Glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-72 sm:w-96 h-72 sm:h-96 bg-cyan-400/20 dark:bg-cyan-500/20 rounded-full blur-3xl animate-pulse" />
@@ -119,4 +119,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default AboutSection;

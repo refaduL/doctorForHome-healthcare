@@ -36,7 +36,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="relative bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 overflow-hidden">
+    <section id="faq" className="relative bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-20 left-20 w-96 h-96 bg-cyan-400/10 dark:bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>

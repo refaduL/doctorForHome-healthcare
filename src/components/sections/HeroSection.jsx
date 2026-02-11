@@ -13,6 +13,7 @@ import {
 const HeroSection = () => {
   return (
     <section
+      id="home"
       className="
       relative min-h-screen flex items-center overflow-hidden
       bg-gradient-to-br from-slate-50 via-white to-blue-50

@@ -53,7 +53,7 @@ const FeatureSection = () => {
   ];
 
   return (
-    <section className="relative bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 overflow-hidden">
+    <section id="features" className="relative bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 overflow-hidden">
       {/* soft background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-400/10 dark:bg-cyan-500/10 rounded-full blur-3xl"></div>
