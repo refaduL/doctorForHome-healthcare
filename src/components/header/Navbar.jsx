@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Menu,
-  X,
-  ChevronDown,
-  Video,
-  Calendar,
-  Stethoscope,
-  FileText,
-  Sun,
-  Moon,
-} from "lucide-react";
+import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,10 +46,11 @@ const Navbar = () => {
     { name: "Home", href: "/" },
     { name: "Services", href: "/services", dropdown: services },
     { name: "Doctors", href: "/doctors" },
-    { name: "Booking", href: "/booking" },
+    // { name: "Booking", href: "/booking" },
     { name: "FAQ", href: "/faq" },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
+    { name: "Dashboard", href: "/patient/dashboard" },
   ];
 
   /* ------------------ ANIMATION VARIANTS ------------------ */
