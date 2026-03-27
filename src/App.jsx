@@ -13,13 +13,13 @@ import DoctorsList from "./pages/DoctorsList";
 import DoctorDetail from "./pages/DoctorDetail";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
-// import AdminDashboard   from "./pages/dashboard/AdminDashboard";    // will code it soon bruh
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
 function App() {
   return (
     <Routes>
 
-       {/* PUBLIC ROUTES: Navbar + Footer */}
+       {/* PUBLIC ROUTES */}
       <Route element={<MainLayout />}>
         <Route path="/"               element={<Home />}         />
         <Route path="/about"          element={<About />}        />
@@ -39,11 +39,11 @@ function App() {
         />
       </Route>
 
-      {/* DASHBOARD ROUTES:  Sidebar layout */}
+      {/* DASHBOARD ROUTES */}
       <Route element={<DashboardLayout />}>
         <Route path="/patient/dashboard"  element={<PatientDashboard />} />
         <Route path="/doctor/dashboard"   element={<DoctorDashboard />} />
-        {/* <Route path="/admin/dashboard"    element={<AdminDashboard />}  /> */}
+        <Route path="/admin/dashboard"    element={<AdminDashboard />}  />
       </Route>
 
     </Routes>

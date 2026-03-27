@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon, User, UserCheck } from "lucide-react";
+import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon, User, UserCheck, UserCog } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,7 @@ const Navbar = () => {
   const dashboards = [
     { icon: <User className="w-5 h-5 text-cyan-500" />, name: "Patient Dashboard", desc: "Manage your health records", href: "/patient/dashboard" },
     { icon: <UserCheck className="w-5 h-5 text-cyan-500" />, name: "Doctor Dashboard", desc: "Manage your patients and schedule", href: "/doctor/dashboard" },
-    // { icon: <UserCog className="w-5 h-5 text-cyan-500" />, name: "Admin Dashboard", desc: "Manage the entire system", href: "/admin/dashboard" },
+    { icon: <UserCog className="w-5 h-5 text-cyan-500" />, name: "Admin Dashboard", desc: "Manage the entire system", href: "/admin/dashboard" },
   ];
 
   const menuItems = [
