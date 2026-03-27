@@ -13,13 +13,13 @@ import DoctorsList from "./pages/DoctorsList";
 import DoctorDetail from "./pages/DoctorDetail";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
-// import AdminDashboard   from "./pages/dashboard/AdminDashboard";    // coming soon
+// import AdminDashboard   from "./pages/dashboard/AdminDashboard";    // will code it soon bruh
 
 function App() {
   return (
     <Routes>
 
-       {/* PUBLIC ROUTES — Navbar + Footer (branding / leads) */}
+       {/* PUBLIC ROUTES: Navbar + Footer */}
       <Route element={<MainLayout />}>
         <Route path="/"               element={<Home />}         />
         <Route path="/about"          element={<About />}        />
@@ -39,10 +39,9 @@ function App() {
         />
       </Route>
 
-      {/* DASHBOARD ROUTES — Sidebar layout */}
+      {/* DASHBOARD ROUTES:  Sidebar layout */}
       <Route element={<DashboardLayout />}>
-        {/* <Route path="/patient/dashboard"  element={<PatientDashboard />} /> */}
-        <Route path="/patient/dashboard"  element={<DoctorDashboard />} />
+        <Route path="/patient/dashboard"  element={<PatientDashboard />} />
         <Route path="/doctor/dashboard"   element={<DoctorDashboard />} />
         {/* <Route path="/admin/dashboard"    element={<AdminDashboard />}  /> */}
       </Route>

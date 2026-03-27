@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon } from "lucide-react";
+import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon, User, UserCheck } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +42,13 @@ const Navbar = () => {
     { icon: <Stethoscope className="w-5 h-5 text-cyan-500" />, name: "Health Checkup", desc: "Complete wellness", href: "/services#checkup" },
   ];
 
+  /* ------------------ DASHBOARDS ------------------ */
+  const dashboards = [
+    { icon: <User className="w-5 h-5 text-cyan-500" />, name: "Patient Dashboard", desc: "Manage your health records", href: "/patient/dashboard" },
+    { icon: <UserCheck className="w-5 h-5 text-cyan-500" />, name: "Doctor Dashboard", desc: "Manage your patients and schedule", href: "/doctor/dashboard" },
+    // { icon: <UserCog className="w-5 h-5 text-cyan-500" />, name: "Admin Dashboard", desc: "Manage the entire system", href: "/admin/dashboard" },
+  ];
+
   const menuItems = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/services", dropdown: services },
@@ -50,7 +57,7 @@ const Navbar = () => {
     { name: "FAQ", href: "/faq" },
     { name: "About Us", href: "/about" },
     { name: "Contact", href: "/contact" },
-    { name: "Dashboard", href: "/patient/dashboard" },
+    { name: "Dashboards", href: "#", dropdown: dashboards },
   ];
 
   /* ------------------ ANIMATION VARIANTS ------------------ */

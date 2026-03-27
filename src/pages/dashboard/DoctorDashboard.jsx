@@ -57,7 +57,7 @@ const SCHEDULE = [
   { day: "Wednesday", active: true,  slots: 14, time: "14:00 – 18:00" },
   { day: "Thursday",  active: true,  slots: 10, time: "09:00 – 12:00" },
   { day: "Friday",    active: false, slots: 0,  time: "Off" },
-  { day: "Saturday",  active: true,  slots: 8,  time: "off" },
+  { day: "Saturday",  active: false,  slots: 0,  time: "off" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
