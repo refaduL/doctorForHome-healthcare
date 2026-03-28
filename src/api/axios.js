@@ -1,10 +1,23 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // change when deployed
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 10000,
 });
+
+// simple clean error normalize
+export const handleApiError = (error) => {
+  if (error.response) {
+    return (
+      error.response.data?.message ||
+      `Request failed (${error.response.status})`
+    );
+  }
+  if (error.request) return "Server not responding";
+  return error.message || "Something went wrong";
+};
 
 export default api;
