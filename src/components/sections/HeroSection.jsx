@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Calendar,
@@ -9,6 +10,7 @@ import {
   Video,
   Zap,
 } from "lucide-react";
+
 
 const HeroSection = () => {
   return (
@@ -130,7 +132,9 @@ const HeroSection = () => {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4 pt-2">
-              <button
+              
+              <Link
+                to="/booking"
                 className="
                 inline-flex items-center gap-3 px-7 py-3 sm:px-8 sm:py-4
                 rounded-xl font-bold text-white
@@ -139,9 +143,9 @@ const HeroSection = () => {
                 transition
               "
               >
-                <Video className="w-5 h-5" />
+                <Calendar className="w-5 h-5" />
                 Book Appointment
-              </button>
+              </Link>
 
               <button
                 className="
