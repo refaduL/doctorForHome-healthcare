@@ -49,11 +49,11 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 // MOCK DATA  (replace with API calls)
 // ─────────────────────────────────────────────────────────────────────────────
 const PATIENT = {
-  patient_name: "Refadul Islam",
+  patient_name: "Meherab Ahmed",
   age: 28,
   gender: "Male",
   mobile: "01712-345678",
-  email: "refadul.islam@gmail.com",
+  email: "meherab.ahmed@gmail.com",
   city: "Dhaka",
   account_created: "2024-01-15",
   blood_group: "B+",
