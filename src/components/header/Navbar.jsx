@@ -1,7 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Calendar,
+  ChevronDown,
+  FileText,
+  Menu,
+  Moon,
+  Stethoscope,
+  Sun,
+  User,
+  UserCheck,
+  UserCog,
+  Video,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, Video, Calendar, Stethoscope, FileText, Sun, Moon, User, UserCheck, UserCog } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,17 +49,52 @@ const Navbar = () => {
 
   /* ------------------ SERVICES ------------------ */
   const services = [
-    { icon: <Video className="w-5 h-5 text-cyan-500" />, name: "Video Consultation", desc: "Connect instantly", href: "/services#video" },
-    { icon: <Calendar className="w-5 h-5 text-cyan-500" />, name: "Home Visit", desc: "Doctor at doorstep", href: "/services#homevisit" },
-    { icon: <FileText className="w-5 h-5 text-cyan-500" />, name: "Lab Tests", desc: "Sample collection", href: "/services#lab" },
-    { icon: <Stethoscope className="w-5 h-5 text-cyan-500" />, name: "Health Checkup", desc: "Complete wellness", href: "/services#checkup" },
+    {
+      icon: <Video className="w-5 h-5 text-cyan-500" />,
+      name: "Video Consultation",
+      desc: "Connect instantly",
+      href: "/services#video",
+    },
+    {
+      icon: <Calendar className="w-5 h-5 text-cyan-500" />,
+      name: "Home Visit",
+      desc: "Doctor at doorstep",
+      href: "/services#homevisit",
+    },
+    {
+      icon: <FileText className="w-5 h-5 text-cyan-500" />,
+      name: "Lab Tests",
+      desc: "Sample collection",
+      href: "/services#lab",
+    },
+    {
+      icon: <Stethoscope className="w-5 h-5 text-cyan-500" />,
+      name: "Health Checkup",
+      desc: "Complete wellness",
+      href: "/services#checkup",
+    },
   ];
 
   /* ------------------ DASHBOARDS ------------------ */
   const dashboards = [
-    { icon: <User className="w-5 h-5 text-cyan-500" />, name: "Patient Dashboard", desc: "Manage your health records", href: "/patient/dashboard" },
-    { icon: <UserCheck className="w-5 h-5 text-cyan-500" />, name: "Doctor Dashboard", desc: "Manage your patients and schedule", href: "/doctor/dashboard" },
-    { icon: <UserCog className="w-5 h-5 text-cyan-500" />, name: "Admin Dashboard", desc: "Manage the entire system", href: "/admin/dashboard" },
+    {
+      icon: <User className="w-5 h-5 text-cyan-500" />,
+      name: "Patient Dashboard",
+      desc: "Manage your health records",
+      href: "/patient/dashboard",
+    },
+    {
+      icon: <UserCheck className="w-5 h-5 text-cyan-500" />,
+      name: "Doctor Dashboard",
+      desc: "Manage your patients and schedule",
+      href: "/doctor/dashboard",
+    },
+    {
+      icon: <UserCog className="w-5 h-5 text-cyan-500" />,
+      name: "Admin Dashboard",
+      desc: "Manage the entire system",
+      href: "/admin/dashboard",
+    },
   ];
 
   const menuItems = [
@@ -91,7 +139,7 @@ const Navbar = () => {
             </div>
             <div>
               <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">
-                DoctorsForHome
+                Panacea
               </h1>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 tracking-wider">
                 HEALTHCARE REIMAGINED
@@ -105,7 +153,9 @@ const Navbar = () => {
               <div
                 key={item.name}
                 className="relative group"
-                onMouseEnter={() => item.dropdown && setActiveDropdown(item.name)}
+                onMouseEnter={() =>
+                  item.dropdown && setActiveDropdown(item.name)
+                }
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <Link
@@ -137,8 +187,12 @@ const Navbar = () => {
                             >
                               {service.icon}
                               <div>
-                                <p className="font-semibold text-slate-800 dark:text-white text-sm">{service.name}</p>
-                                <p className="text-xs text-slate-500">{service.desc}</p>
+                                <p className="font-semibold text-slate-800 dark:text-white text-sm">
+                                  {service.name}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                  {service.desc}
+                                </p>
                               </div>
                             </Link>
                           ))}

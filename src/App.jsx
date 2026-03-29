@@ -6,7 +6,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import MainLayout from "./layouts/MainLayout";
 
 import About from "./pages/About";
-import Booking from "./pages/Booking";
+import AppointmentBooking from "./pages/Booking";
 import DoctorDetail from "./pages/DoctorDetail";
 import DoctorsList from "./pages/DoctorsList";
 import FAQ from "./pages/FAQ";
@@ -15,6 +15,7 @@ import Services from "./pages/Services";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
+import Booking from "./pages/BookingAppointment";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          {/* <Route path="/booking" element={<AppointmentBooking />} /> */}
           <Route path="/booking" element={<Booking />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/services" element={<Services />} />

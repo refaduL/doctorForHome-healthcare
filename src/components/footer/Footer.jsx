@@ -1,26 +1,50 @@
-import React from 'react';
-import { Stethoscope, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, Heart } from 'lucide-react';
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Stethoscope,
+  Twitter,
+} from "lucide-react";
 
 const Footer = () => {
   const quickLinks = [
-    { name: 'About Us', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Doctors', href: '#doctors' },
-    { name: 'Careers', href: '#careers' }
+    { name: "About Us", href: "#about" },
+    { name: "Services", href: "#services" },
+    { name: "Doctors", href: "#doctors" },
+    { name: "Careers", href: "#careers" },
   ];
 
   const services = [
-    { name: 'Video Consultation', href: '#' },
-    { name: 'Home Visit', href: '#' },
-    { name: 'Lab Tests', href: '#' },
-    { name: 'Health Checkup', href: '#' }
+    { name: "Video Consultation", href: "#" },
+    { name: "Home Visit", href: "#" },
+    { name: "Lab Tests", href: "#" },
+    { name: "Health Checkup", href: "#" },
   ];
 
   const socialLinks = [
-    { icon: <Facebook className="w-4 h-4" />, href: '#', color: 'hover:bg-blue-500' },
-    { icon: <Twitter className="w-4 h-4" />, href: '#', color: 'hover:bg-sky-500' },
-    { icon: <Instagram className="w-4 h-4" />, href: '#', color: 'hover:bg-pink-500' },
-    { icon: <Linkedin className="w-4 h-4" />, href: '#', color: 'hover:bg-blue-600' }
+    {
+      icon: <Facebook className="w-4 h-4" />,
+      href: "#",
+      color: "hover:bg-blue-500",
+    },
+    {
+      icon: <Twitter className="w-4 h-4" />,
+      href: "#",
+      color: "hover:bg-sky-500",
+    },
+    {
+      icon: <Instagram className="w-4 h-4" />,
+      href: "#",
+      color: "hover:bg-pink-500",
+    },
+    {
+      icon: <Linkedin className="w-4 h-4" />,
+      href: "#",
+      color: "hover:bg-blue-600",
+    },
   ];
 
   return (
@@ -42,12 +66,13 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">
-                  DoctorsForHome
+                  Panacea
                 </h3>
               </div>
             </div>
             <p className="text-slate-400 text-sm mb-4 leading-relaxed">
-              Revolutionizing healthcare with technology and compassion for a healthier tomorrow.
+              Revolutionizing healthcare with technology and compassion for a
+              healthier tomorrow.
             </p>
             {/* Social Links */}
             <div className="flex items-center gap-2">
@@ -123,17 +148,20 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="mailto:info@doctorsforhome.com"
+                  href="mailto:info@Panacea.com"
                   className="flex items-start gap-3 text-slate-400 text-sm hover:text-pink-400 transition-colors duration-300 group"
                 >
                   <Mail className="w-4 h-4 mt-0.5 group-hover:scale-110 transition-transform" />
-                  <span>info@doctorsforhome.com</span>
+                  <span>info@Panacea.com</span>
                 </a>
               </li>
               <li>
                 <div className="flex items-start gap-3 text-slate-400 text-sm">
                   <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>Takwa Chowdhury plaza, Nowa bazar bishwo road mor, PC road Halishahar Chottogram.</span>
+                  <span>
+                    Takwa Chowdhury plaza, Nowa bazar bishwo road mor, PC road
+                    Halishahar Chottogram.
+                  </span>
                 </div>
               </li>
             </ul>
@@ -145,18 +173,27 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <p className="text-slate-500 text-sm text-center md:text-left">
-              © 2026 DoctorsForHome. All rights reserved.
+              © 2026 Panacea. All rights reserved.
             </p>
 
             {/* Legal Links */}
             <div className="flex items-center gap-6 text-sm">
-              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors duration-300">
+              <a
+                href="#"
+                className="text-slate-500 hover:text-cyan-400 transition-colors duration-300"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors duration-300">
+              <a
+                href="#"
+                className="text-slate-500 hover:text-cyan-400 transition-colors duration-300"
+              >
                 Terms of Service
               </a>
-              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors duration-300">
+              <a
+                href="#"
+                className="text-slate-500 hover:text-cyan-400 transition-colors duration-300"
+              >
                 Cookie Policy
               </a>
             </div>
