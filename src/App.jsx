@@ -5,13 +5,14 @@ import "./App.css";
 import DashboardLayout from "./layouts/DashboardLayout";
 import MainLayout from "./layouts/MainLayout";
 
-import Booking from "../../store/pages/BookingAppointment";
-import About from "./pages/About";
-import DoctorDetail from "./pages/DoctorDetail";
-import DoctorsList from "./pages/DoctorsList";
-import FAQ from "./pages/FAQ";
 import Home from "./pages/Home";
+import About from "./pages/About";
 import Services from "./pages/Services";
+import FAQ from "./pages/FAQ";
+import DoctorsList from "./pages/DoctorsList";
+import DoctorDetail from "./pages/DoctorDetail";
+import Booking from "./pages/BookingAppointment";
+
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
@@ -25,7 +26,6 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          {/* <Route path="/booking" element={<AppointmentBooking />} /> */}
           <Route path="/booking" element={<Booking />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/services" element={<Services />} />
