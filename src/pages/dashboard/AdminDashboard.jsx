@@ -14,6 +14,8 @@
  * Route:  /admin/dashboard?tab=overview
  */
 
+
+
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
@@ -48,9 +50,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // MOCK DATA  (replace with real API calls)
-// ─────────────────────────────────────────────────────────────────────────────
+
 const ADMIN = {
   manager_id: 1,
   manager_name: "Fatema Khanam",
@@ -368,9 +370,9 @@ const APPOINTMENTS = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // CONSTANTS
-// ─────────────────────────────────────────────────────────────────────────────
+
 const TABS = [
   { id: "overview", label: "Overview", Icon: LayoutDashboard },
   { id: "doctors", label: "Doctors", Icon: Stethoscope },
@@ -419,9 +421,9 @@ const STATUS_MAP = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
+
 const fmtDate = (s) =>
   new Date(s).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -450,9 +452,9 @@ const initials = (name) =>
     .join("")
     .toUpperCase();
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // SHARED UI PRIMITIVES
-// ─────────────────────────────────────────────────────────────────────────────
+
 function StatusBadge({ status }) {
   const s = STATUS_MAP[status] || STATUS_MAP.Pending;
   return (
@@ -586,9 +588,9 @@ function MiniBar({ value, max, color = "bg-violet-500" }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: OVERVIEW
-// ─────────────────────────────────────────────────────────────────────────────
+
 function OverviewTab({ setSearchParams }) {
   const goTab = (tab) => setSearchParams({ tab });
 
@@ -787,9 +789,9 @@ function OverviewTab({ setSearchParams }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: DOCTORS
-// ─────────────────────────────────────────────────────────────────────────────
+
 function DoctorsTab() {
   const [query, setQuery] = useState("");
   const [branch, setBranch] = useState("All");
@@ -912,9 +914,9 @@ function DoctorsTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: PATIENTS
-// ─────────────────────────────────────────────────────────────────────────────
+
 function PatientsTab() {
   const [query, setQuery] = useState("");
   const [branch, setBranch] = useState("All");
@@ -1028,9 +1030,9 @@ function PatientsTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: APPOINTMENTS
-// ─────────────────────────────────────────────────────────────────────────────
+
 function AppointmentsTab() {
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
@@ -1126,9 +1128,9 @@ function AppointmentsTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: BRANCHES
-// ─────────────────────────────────────────────────────────────────────────────
+
 function BranchesTab() {
   const maxPatients = Math.max(...BRANCHES.map((b) => b.patients));
 
@@ -1258,9 +1260,9 @@ function BranchesTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // TAB: PROFILE
-// ─────────────────────────────────────────────────────────────────────────────
+
 function ProfileTab() {
   const fields = [
     { label: "Full Name", value: ADMIN.manager_name, Icon: ShieldCheck },
@@ -1374,9 +1376,9 @@ function ProfileTab() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // MAIN DASHBOARD
-// ─────────────────────────────────────────────────────────────────────────────
+
 export default function AdminDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
 

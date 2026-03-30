@@ -5,8 +5,8 @@ import "./App.css";
 import DashboardLayout from "./layouts/DashboardLayout";
 import MainLayout from "./layouts/MainLayout";
 
+import Booking from "../../store/pages/BookingAppointment";
 import About from "./pages/About";
-import AppointmentBooking from "./pages/Booking";
 import DoctorDetail from "./pages/DoctorDetail";
 import DoctorsList from "./pages/DoctorsList";
 import FAQ from "./pages/FAQ";
@@ -15,7 +15,6 @@ import Services from "./pages/Services";
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
-import Booking from "./pages/BookingAppointment";
 
 function App() {
   return (

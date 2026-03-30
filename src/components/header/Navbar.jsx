@@ -104,7 +104,7 @@ const Navbar = () => {
     // { name: "Booking", href: "/booking" },
     { name: "FAQ", href: "/faq" },
     { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    // { name: "Contact", href: "/contact" },
     { name: "Dashboards", href: "#", dropdown: dashboards },
   ];
 

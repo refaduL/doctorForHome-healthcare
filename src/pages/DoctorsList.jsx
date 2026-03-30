@@ -1,3 +1,12 @@
+/**
+ * DoctorsList.jsx  —  pages/DoctorsList.jsx
+ *
+ * List view, one doctor per row.
+ * Buttons are always inside the card at every breakpoint.
+ * Layout: avatar | info (flex-1) | fee+availability | actions
+ * On mobile: avatar+info top, meta+buttons bottom.
+ */
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,45 +18,28 @@ import {
 import { useDoctors }   from "../hooks/useDoctors";
 import LoadWrapper      from "../components/shared/LoadWrapper";
 import { showError }    from "../utils/toast";
+import { fmtFee, initials, TODAY_NAME } from "../utils/formatters";
+import { specColor }    from "../utils/specConfig";
+import DoctorAvatar     from "../components/shared/DoctorAvatar";
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
-
-const TODAY = new Date().toLocaleDateString("en-US", { weekday: "long" });
+// ─── schedule helpers (list-page only, not shared) ────────────────────────────
 
 const availableToday = (schedules = []) =>
-  schedules.some((s) => s.days?.toLowerCase() === TODAY.toLowerCase());
+  schedules.some((s) => s.days?.toLowerCase() === TODAY_NAME.toLowerCase());
 
 const slotsToday = (schedules = []) =>
   schedules
-    .filter((s) => s.days?.toLowerCase() === TODAY.toLowerCase())
-    .reduce((n, s) => n + (s.doc_sc?.slots || 0), 0);
+    .filter((s) => s.days?.toLowerCase() === TODAY_NAME.toLowerCase())
+    .reduce((n, s) => n + (s.slots || 0), 0);
 
-const specColor = (specialty = "") => {
-  const s = specialty.toLowerCase();
-  if (s.includes("cardio"))  return { bg: "bg-rose-500/10",    text: "text-rose-500",    bar: "bg-rose-500"    };
-  if (s.includes("neuro"))   return { bg: "bg-violet-500/10",  text: "text-violet-500",  bar: "bg-violet-500"  };
-  if (s.includes("ortho"))   return { bg: "bg-amber-500/10",   text: "text-amber-500",   bar: "bg-amber-500"   };
-  if (s.includes("derm"))    return { bg: "bg-pink-500/10",    text: "text-pink-500",    bar: "bg-pink-500"    };
-  if (s.includes("ophthal")) return { bg: "bg-sky-500/10",     text: "text-sky-500",     bar: "bg-sky-500"     };
-  if (s.includes("pediatr")) return { bg: "bg-emerald-500/10", text: "text-emerald-500", bar: "bg-emerald-500" };
-  if (s.includes("onco"))    return { bg: "bg-orange-500/10",  text: "text-orange-500",  bar: "bg-orange-500"  };
-  if (s.includes("radio"))   return { bg: "bg-teal-500/10",    text: "text-teal-500",    bar: "bg-teal-500"    };
-  return                            { bg: "bg-cyan-500/10",    text: "text-cyan-500",    bar: "bg-cyan-500"    };
-};
-
-const initials = (name = "") =>
-  name.replace(/^Dr\.?\s*/i, "").split(" ").slice(0, 2).map((n) => n[0]).join("").toUpperCase();
-
-const fmtFee = (fee) => (fee ? `৳${Number(fee).toLocaleString()}` : "—");
-
-// DoctorRow 
+// ─── DoctorRow ────────────────────────────────────────────────────────────────
 
 function DoctorRow({ doctor, index }) {
   const c        = specColor(doctor.specialization);
   const avail    = availableToday(doctor.schedules);
   const slots    = slotsToday(doctor.schedules);
-  const dept     = doctor.dept?.dept_name          || "—";
-  const branch   = doctor.branch?.location_details || "—";
+  const branch   = doctor.branch?.location_details || doctor.branch || "—";
+  const dept     = doctor.dept?.dept_name          || doctor.dept   || "—";
 
   return (
     <motion.div
@@ -61,21 +53,14 @@ function DoctorRow({ doctor, index }) {
       <div className={`relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-slate-950/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200`}>
 
         {/* Specialty accent — thin left bar */}
-        {/* <div className={`absolute inset-y-0 left-0 w-1 ${c.bar} opacity-60 rounded-l-2xl`} /> */}
+        <div className={`absolute inset-y-0 left-0 w-1 ${c.bar} opacity-60 rounded-l-2xl`} />
 
-        {/* MOBILE  (below sm) */}
+        {/* ── MOBILE  (below sm) ──────────────────────────────────────────── */}
         <div className="sm:hidden pl-4 pr-4 pt-4 pb-4">
 
           {/* Top: avatar + name block */}
           <div className="flex items-center gap-3">
-            {doctor.image ? (
-              <img src={doctor.image} alt={doctor.doctor_name}
-                className="w-12 h-12 rounded-xl object-cover shrink-0" />
-            ) : (
-              <div className={`w-12 h-12 rounded-xl ${c.bg} ${c.text} flex items-center justify-center font-bold text-sm shrink-0`}>
-                {initials(doctor.doctor_name)}
-              </div>
-            )}
+            <DoctorAvatar name={doctor.doctor_name} specialty={doctor.specialization} image={doctor.image} size="sm" />
 
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
@@ -94,7 +79,7 @@ function DoctorRow({ doctor, index }) {
                 : "bg-slate-100 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700"
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${avail ? "bg-emerald-500 animate-pulse" : "bg-slate-300 dark:bg-slate-600"}`} />
-              {avail ? `${slots} slots` : "Off today"}
+              {avail ? `${slots} slots` : "Off"}
             </span>
           </div>
 
@@ -104,7 +89,7 @@ function DoctorRow({ doctor, index }) {
               <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
               {branch.replace(" Branch", "")}
             </span>
-            {/* <span>{dept}</span> */}
+            <span>{dept}</span>
             <span className="font-semibold text-slate-700 dark:text-slate-300">{fmtFee(doctor.fee)}</span>
           </div>
 
@@ -121,18 +106,11 @@ function DoctorRow({ doctor, index }) {
           </div>
         </div>
 
-        {/* DESKTOP (sm and up) */}
+        {/* ── DESKTOP (sm+): all in one flex row, no fixed widths that overflow ── */}
         <div className="hidden sm:flex items-center gap-4 pl-5 pr-4 py-4">
 
           {/* Avatar */}
-          {doctor.image ? (
-            <img src={doctor.image} alt={doctor.doctor_name}
-              className="w-14 h-14 rounded-xl object-cover shrink-0" />
-          ) : (
-            <div className={`w-14 h-14 rounded-xl ${c.bg} ${c.text} flex items-center justify-center font-bold text-base shrink-0`}>
-              {initials(doctor.doctor_name)}
-            </div>
-          )}
+          <DoctorAvatar name={doctor.doctor_name} specialty={doctor.specialization} image={doctor.image} size="md" />
 
           {/* Name + specialty + quals — takes all leftover space */}
           <div className="flex-1 min-w-0">
@@ -151,22 +129,20 @@ function DoctorRow({ doctor, index }) {
             )}
           </div>
 
-          {/* Branch + dept  */}
-          <div className="hidden md:flex flex-col items-center justify-center gap-1 shrink-0 w-32 text-center">
+          {/* Branch + dept — shrink when space is tight */}
+          <div className="hidden md:flex flex-col gap-0.5 shrink-0 w-32">
             <span className="text-[10px] uppercase tracking-widest text-slate-400">Branch</span>
-
-            <div className="flex items-center justify-center gap-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
-              <MapPin className="w-3 h-3 text-slate-400" />
-              <span className="truncate">{branch}</span>
-            </div>
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1 truncate">
+              <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+              {branch.replace(" Branch", "")}
+            </span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{dept}</span>
           </div>
 
           {/* Fee */}
-          <div className="hidden sm:flex flex-col items-center justify-center shrink-0 w-24 text-center">
-            <span className="text-[10px] uppercase tracking-widest text-slate-400">Fee</span>
-            <span className="text-base font-bold text-slate-900 dark:text-white">
-              {fmtFee(doctor.fee)}
-            </span>
+          <div className="shrink-0 text-right hidden sm:block">
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 block">Fee</span>
+            <span className="text-base font-bold text-slate-900 dark:text-white">{fmtFee(doctor.fee)}</span>
           </div>
 
           {/* Availability */}
