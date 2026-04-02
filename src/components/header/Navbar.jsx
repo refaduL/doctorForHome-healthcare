@@ -16,13 +16,15 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import SegmentedThemeToggle from "../shared/ThemeToggle";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mobileOpenDropdown, setMobileOpenDropdown] = useState(null);
+
 
   const { user } = useAuth();
   const isLoggedIn = !!user;
@@ -271,84 +273,117 @@ const Navbar = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden overflow-hidden bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800"
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25 }}
+              className="lg:hidden fixed top-20 left-0 right-0 z-40"
             >
-              {menuItems.map((item) => (
-                <div key={item.name} className="px-4 py-2">
-                  <Link
-                    to={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block py-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-                  >
-                    {item.name}
-                  </Link>
+              <div className="mx-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl shadow-2xl overflow-hidden">
+                
+                {/* SCROLLABLE CONTENT */}
+                <div className="max-h-[calc(100vh-7rem)] overflow-y-auto">
+                  <div className="p-4 space-y-2">
+                    {menuItems.map((item) => {
+                      const isDropdown = !!item.dropdown;
+                      const isExpanded = mobileOpenDropdown === item.name;
 
-                  {/* MOBILE DROPDOWN */}
-                  {item.dropdown && (
-                    <AnimatePresence>
-                      <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        variants={mobileDropdownVariants}
-                        className="pl-4 overflow-hidden"
+                      return (
+                        <div key={item.name}>
+                          {isDropdown ? (
+                            <button
+                              onClick={() =>
+                                setMobileOpenDropdown(
+                                  isExpanded ? null : item.name
+                                )
+                              }
+                              className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-medium"
+                            >
+                              <span>{item.name}</span>
+                              <ChevronDown
+                                className={`w-4 h-4 transition-transform ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              />
+                            </button>
+                          ) : (
+                            <Link
+                              to={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className="block px-4 py-3 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition font-medium"
+                            >
+                              {item.name}
+                            </Link>
+                          )}
+
+                          {/* COLLAPSIBLE DROPDOWN */}
+                          <AnimatePresence initial={false}>
+                            {isDropdown && isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="pl-4 mt-1 space-y-1">
+                                  {item.dropdown.map((subItem) => (
+                                    <Link
+                                      key={subItem.name}
+                                      to={subItem.href}
+                                      onClick={() => {
+                                        setIsOpen(false);
+                                        setMobileOpenDropdown(null);
+                                      }}
+                                      className="block px-4 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                                    >
+                                      {subItem.name}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* STICKY ACTIONS */}
+                  <div className="sticky bottom-0 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 p-4 space-y-3">
+                    <Link
+                      to="/booking"
+                      onClick={() => setIsOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-bold"
+                    >
+                      <Calendar className="w-4 h-4" />
+                      Book Now
+                    </Link>
+
+                    {isLoggedIn ? (
+                      <Link
+                        to={dashboardLink}
+                        onClick={() => setIsOpen(false)}
+                        className="w-full block text-center px-4 py-3 rounded-xl border border-cyan-500 text-cyan-600 dark:text-cyan-400 font-semibold hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition"
                       >
-                        {item.dropdown.map((service) => (
-                          <Link
-                            key={service.name}
-                            to={service.href}
-                            onClick={() => setIsOpen(false)}
-                            className="block py-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
-                          >
-                            {service.name}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    </AnimatePresence>
-                  )}
+                        Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/auth"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full block text-center px-4 py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold"
+                      >
+                        Sign In
+                      </Link>
+                    )}
+
+                    <SegmentedThemeToggle
+                      darkMode={darkMode}
+                      toggleTheme={toggleTheme}
+                    />
+                  </div>
                 </div>
-              ))}
-
-              {/* MOBILE ACTIONS */}
-              <div className="px-4 py-4 space-y-3 border-t border-slate-200 dark:border-slate-800 mt-2">
-                <Link
-                  to="/booking"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-bold"
-                >
-                  <Calendar className="w-4 h-4" />
-                  Book Now
-                </Link>
-
-                {isLoggedIn ? (
-                  <Link
-                    to={dashboardLink}
-                    onClick={() => setIsOpen(false)}
-                    className="w-full block text-center px-4 py-3 rounded-xl border border-cyan-500 text-cyan-600 dark:text-cyan-400 font-semibold hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition"
-                  >
-                    Dashboard
-                  </Link>
-                ) : (
-                  <Link
-                    to="/signin"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full block text-center px-4 py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold"
-                  >
-                    Sign In
-                  </Link>
-                )}
-
-                {/* THEME TOGGLE */}
-                <button
-                  onClick={toggleTheme}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium"
-                >
-                  Toggle {darkMode ? "Light" : "Dark"} Mode
-                </button>
               </div>
             </motion.div>
           )}
