@@ -15,12 +15,27 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+
+  const dashboardLink = user
+    ? {
+        patient: "/patient/dashboard",
+        doctor: "/doctor/dashboard",
+        admin: "/admin/dashboard",
+      }[user.role] || "/"
+    : "/signin";
+
+  
 
   /* ------------------ THEME SETUP ------------------ */
   useEffect(() => {
@@ -37,6 +52,7 @@ const Navbar = () => {
   const toggleTheme = () => {
     const isDark = document.documentElement.classList.toggle("dark");
     setDarkMode(isDark);
+    console.log("user is : ", user);
     localStorage.setItem("theme", isDark ? "dark" : "light");
   };
 
@@ -222,6 +238,23 @@ const Navbar = () => {
               <Calendar className="w-4 h-4" />
               Book Now
             </Link>
+
+            {/* AUTH BUTTON */}
+            {isLoggedIn ? (
+              <Link
+                to={dashboardLink}
+                className="px-6 py-2.5 rounded-xl font-semibold border border-cyan-500 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="px-6 py-2.5 rounded-xl font-semibold bg-slate-900 text-white dark:bg-white dark:text-slate-900 hover:opacity-90 transition"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
 
           {/* MOBILE MENU BUTTON */}
@@ -280,13 +313,43 @@ const Navbar = () => {
                 </div>
               ))}
 
-              {/* THEME TOGGLE */}
-              <button
-                onClick={toggleTheme}
-                className="mt-4 w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800"
-              >
-                Toggle {darkMode ? "Light" : "Dark"} Mode
-              </button>
+              {/* MOBILE ACTIONS */}
+              <div className="px-4 py-4 space-y-3 border-t border-slate-200 dark:border-slate-800 mt-2">
+                <Link
+                  to="/booking"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-bold"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Book Now
+                </Link>
+
+                {isLoggedIn ? (
+                  <Link
+                    to={dashboardLink}
+                    onClick={() => setIsOpen(false)}
+                    className="w-full block text-center px-4 py-3 rounded-xl border border-cyan-500 text-cyan-600 dark:text-cyan-400 font-semibold hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition"
+                  >
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    to="/signin"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full block text-center px-4 py-3 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold"
+                  >
+                    Sign In
+                  </Link>
+                )}
+
+                {/* THEME TOGGLE */}
+                <button
+                  onClick={toggleTheme}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 font-medium"
+                >
+                  Toggle {darkMode ? "Light" : "Dark"} Mode
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

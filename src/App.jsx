@@ -2,9 +2,11 @@ import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 
-import DashboardLayout from "./layouts/DashboardLayout";
 import MainLayout from "./layouts/MainLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
+// Public pages
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -13,6 +15,10 @@ import DoctorsList from "./pages/DoctorsList";
 import DoctorDetail from "./pages/DoctorDetail";
 import Booking from "./pages/BookingAppointment";
 
+// Auth pages
+import AuthPage from "./pages/AuthPage";
+
+// Dashboard pages
 import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import DoctorDashboard from "./pages/dashboard/DoctorDashboard";
 import PatientDashboard from "./pages/dashboard/PatientDashboard";
@@ -22,6 +28,7 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
+
         {/* PUBLIC ROUTES */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
@@ -42,11 +49,22 @@ function App() {
           />
         </Route>
 
+        {/* AUTH ROUTE */}
+        <Route path="/auth" element={<AuthPage />} />
+
         {/* DASHBOARD ROUTES */}
         <Route element={<DashboardLayout />}>
-          <Route path="/patient/dashboard" element={<PatientDashboard />} />
-          <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+          <Route element={<ProtectedRoute allowedRoles={["patient"]} />}>
+            <Route path="/patient/dashboard" element={<PatientDashboard />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
+            <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          </Route>
+
         </Route>
       </Routes>
     </>

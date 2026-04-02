@@ -6,6 +6,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 10000,
+  withCredentials: true,
 });
 
 // simple clean error normalize

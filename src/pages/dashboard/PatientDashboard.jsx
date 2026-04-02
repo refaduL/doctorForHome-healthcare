@@ -25,6 +25,7 @@ import {
   FileText,
   FlaskConical,
   Hash,
+  Loader2,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -44,20 +45,13 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { showError, showSuccess } from "../../utils/toast";
+import { useAppointment } from "../../hooks/useAppointment";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCK DATA  (replace with API calls)
 // ─────────────────────────────────────────────────────────────────────────────
-const PATIENT = {
-  patient_name: "Meherab Ahmed",
-  age: 28,
-  gender: "Male",
-  mobile: "01712-345678",
-  email: "meherab.ahmed@gmail.com",
-  city: "Dhaka",
-  account_created: "2024-01-15",
-  blood_group: "B+",
-};
 
 const APPOINTMENTS = [
   {
@@ -274,6 +268,8 @@ function SectionHeading({ children }) {
 // TAB: OVERVIEW
 // ─────────────────────────────────────────────────────────────────────────────
 function OverviewTab({ navigate, setSearchParams }) {
+  const { user } = useAuth();
+
   const next = APPOINTMENTS.find((a) => a.status === "Confirmed");
   const completed = APPOINTMENTS.filter((a) => a.status === "Completed").length;
 
@@ -324,7 +320,7 @@ function OverviewTab({ navigate, setSearchParams }) {
           Patient Dashboard
         </p>
         <h2 className="text-2xl font-bold font-display mb-1">
-          Good day, {PATIENT.patient_name.split(" ")[0]} 👋
+          Good day, {user?.name.split(" ")[0]} 👋
         </h2>
         <p className="text-sm text-blue-100 max-w-md">
           {next
@@ -466,13 +462,52 @@ function OverviewTab({ navigate, setSearchParams }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: APPOINTMENTS
 // ─────────────────────────────────────────────────────────────────────────────
+
 function AppointmentsTab() {
+  const {
+    patientAppointments = [],
+    loading,
+    error,
+  } = useAppointment();
+
   const [filter, setFilter] = useState("All");
-  const statuses = ["All", "Confirmed", "Completed", "Cancelled"];
+
+  const statuses = [
+    "All",
+    "Pending",
+    "Confirmed",
+    "Completed",
+    "Cancelled",
+  ];
+
+  const safeAppointments = Array.isArray(patientAppointments)
+    ? patientAppointments
+    : [];
+
   const filtered =
     filter === "All"
-      ? APPOINTMENTS
-      : APPOINTMENTS.filter((a) => a.status === filter);
+      ? safeAppointments
+      : safeAppointments.filter(
+          (a) =>
+            a?.status?.toLowerCase() ===
+            filter.toLowerCase()
+        );
+
+  if (loading) {
+    return (
+      <div className="py-16 text-center text-sm text-slate-400">
+        Loading appointments...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-16 text-center text-sm text-red-500">
+        Failed to load appointments
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -480,14 +515,20 @@ function AppointmentsTab() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <SectionHeading>Appointments</SectionHeading>
-        <button className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition">
-          <Plus className="w-4 h-4" /> Book New
-        </button>
+
+        <Link
+          to="/booking"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:opacity-90 transition"
+        >
+          <Plus className="w-4 h-4" />
+          Book New
+        </Link>
       </div>
 
-      {/* Filter pills */}
+      {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-6">
         {statuses.map((s) => (
           <button
@@ -504,59 +545,110 @@ function AppointmentsTab() {
         ))}
       </div>
 
+      {/* Appointment List */}
       <div className="flex flex-col gap-3">
         <AnimatePresence mode="popLayout">
-          {filtered.map((a, i) => (
-            <motion.div
-              key={a.id}
-              layout
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ delay: i * 0.04 }}
-            >
-              <Card hover className="p-4 sm:p-5">
-                <div className="flex flex-wrap items-center gap-4">
-                  <Avatar name={a.doctor} size="md" />
-                  <div className="flex-1 min-w-[120px]">
-                    <p className="font-bold text-slate-900 dark:text-white text-sm">
-                      {a.doctor}
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                      {a.specialty} · {a.branch}
-                    </p>
-                  </div>
-                  <div className="hidden sm:flex flex-col gap-1 min-w-[140px]">
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                      <CalendarDays className="w-3.5 h-3.5 text-slate-400" />{" "}
-                      {fmtDate(a.date)}
+          {filtered.map((appointment, i) => {
+            const {
+              appointment_id,
+              appointment_date,
+              appointment_time,
+              serial_no,
+              status,
+              doctor,
+            } = appointment;
+
+            const doctorName =
+              doctor?.doctor_name || "Unknown Doctor";
+
+            const specialization =
+              doctor?.specialization || "General";
+
+            return (
+              <motion.div
+                key={appointment_id || i}
+                layout
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97 }}
+                transition={{ delay: i * 0.04 }}
+              >
+                <Card
+                  hover
+                  className="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm"
+                >
+                  <div className="flex flex-wrap items-center gap-4">
+                    <Avatar name={doctorName} size="md" />
+
+                    {/* Doctor Info */}
+                    <div className="flex-1 min-w-[140px]">
+                      <p className="font-bold text-slate-900 dark:text-white text-sm">
+                        {doctorName}
+                      </p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                        {specialization}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />{" "}
-                      {fmtTime(a.time)} · Serial #{a.serial}
+
+                    {/* Desktop Date */}
+                    <div className="hidden sm:flex flex-col gap-1 min-w-[150px]">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                        <CalendarDays className="w-3.5 h-3.5 text-slate-500" />
+                        {appointment_date
+                          ? fmtDate(appointment_date)
+                          : "Date unavailable"}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                        <Clock className="w-3.5 h-3.5 text-slate-500" />
+                        {appointment_time
+                          ? fmtTime(appointment_time)
+                          : "Time pending"}
+                      </div>
+                    </div>
+
+                    {/* SERIAL HIGHLIGHT CENTER */}
+                    <div className="hidden sm:flex flex-col items-center justify-center min-w-[100px]">
+                      <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                        Serial
+                      </span>
+                      <span className="text-xl font-black text-cyan-600 dark:text-cyan-400">
+                        #{serial_no ?? "N/A"}
+                      </span>
+                    </div>
+
+                    {/* Status */}
+                    <div className="flex flex-col items-end">
+                      <StatusBadge status={status || "Pending"} />
+
+                      {/* MOBILE SERIAL BELOW STATUS */}
+                      <div className="sm:hidden mt-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-800">
+                        <span className="text-xs font-bold text-cyan-700 dark:text-cyan-300">
+                          Serial #{serial_no ?? "N/A"}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <StatusBadge status={a.status} />
-                </div>
-                {/* mobile-only date row */}
-                <div className="sm:hidden flex flex-wrap gap-3 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <span className="flex items-center gap-1 text-[11px] text-slate-400">
-                    <CalendarDays className="w-3 h-3" />
-                    {fmtDate(a.date)}
-                  </span>
-                  <span className="flex items-center gap-1 text-[11px] text-slate-400">
-                    <Clock className="w-3 h-3" />
-                    {fmtTime(a.time)}
-                  </span>
-                  <span className="flex items-center gap-1 text-[11px] text-slate-400">
-                    <Hash className="w-3 h-3" />
-                    Serial #{a.serial}
-                  </span>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
+
+                  {/* Mobile metadata row */}
+                  <div className="sm:hidden flex flex-wrap gap-3 mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                    <span className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
+                      <CalendarDays className="w-3 h-3" />
+                      {appointment_date ? fmtDate(appointment_date) : "N/A"}
+                    </span>
+
+                    <span className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
+                      <Clock className="w-3 h-3" />
+                      {appointment_time ? fmtTime(appointment_time) : "Pending"}
+                    </span>
+                  </div>
+                </Card>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
+
+        {/* Empty State */}
         {filtered.length === 0 && (
           <div className="text-center py-16 text-slate-400 text-sm">
             No appointments found
@@ -566,6 +658,7 @@ function AppointmentsTab() {
     </motion.div>
   );
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: DIAGNOSES
@@ -627,17 +720,19 @@ function DiagnosesTab() {
 // TAB: PROFILE
 // ─────────────────────────────────────────────────────────────────────────────
 function ProfileTab() {
+  const { user } = useAuth();
+  console.log("user: ", user);
   const fields = [
-    { label: "Full Name", value: PATIENT.patient_name, Icon: UserCircle2 },
-    { label: "Age", value: `${PATIENT.age} years`, Icon: Activity },
-    { label: "Gender", value: PATIENT.gender, Icon: Star },
-    { label: "Blood Group", value: PATIENT.blood_group, Icon: TrendingUp },
-    { label: "Mobile", value: PATIENT.mobile, Icon: Phone },
-    { label: "Email", value: PATIENT.email, Icon: Mail },
-    { label: "City", value: PATIENT.city, Icon: MapPin },
+    { label: "Full Name", value: user?.name, Icon: UserCircle2 },
+    { label: "Age", value: `${user?.age} years`, Icon: Activity },
+    { label: "Gender", value: user?.gender, Icon: Star },
+    { label: "Blood Group", value: user?.blood_group, Icon: TrendingUp },
+    { label: "Mobile", value: user?.mobile, Icon: Phone },
+    { label: "Email", value: user?.email, Icon: Mail },
+    { label: "City", value: user?.city, Icon: MapPin },
     {
       label: "Member Since",
-      value: fmtDate(PATIENT.account_created),
+      value: fmtDate(user.account_created),
       Icon: CalendarDays,
     },
   ];
@@ -654,17 +749,17 @@ function ProfileTab() {
         <div className="absolute bottom-0 right-20 w-28 h-28 rounded-full bg-white/5" />
         <div className="flex flex-wrap items-center gap-5">
           <div className="w-20 h-20 rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center text-3xl font-bold font-display">
-            {initials(PATIENT.patient_name)}
+            {initials(user?.name)}
           </div>
           <div>
             <p className="text-xl font-bold font-display">
-              {PATIENT.patient_name}
+              {user?.name}
             </p>
             <p className="text-sm text-blue-100 mt-0.5">
-              Patient · {PATIENT.city}
+              Patient · {user?.city}
             </p>
             <p className="text-xs text-blue-200 mt-1">
-              Member since {fmtDate(PATIENT.account_created)}
+              Member since {fmtDate(user?.account_created)}
             </p>
           </div>
           <button className="ml-auto inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 transition border border-white/30 text-white text-sm font-semibold px-4 py-2 rounded-xl">
@@ -708,8 +803,9 @@ function ProfileTab() {
 export default function PatientDashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  // ── URL-based tab state ─────────────────────────────────────────────────────
+  //  URL-based tab state
   const rawTab = searchParams.get("tab");
   const activeTab = TABS.find((t) => t.id === rawTab) ? rawTab : "overview";
 
@@ -717,7 +813,7 @@ export default function PatientDashboard() {
     setSearchParams({ tab: id }, { replace: false });
   };
 
-  // ── Dark mode (reads <html class="dark"> set by Navbar) ────────────────────
+  // ── Dark mode (reads <html class="dark"> set by Navbar)
   const [dark, setDark] = useState(() =>
     document.documentElement.classList.contains("dark"),
   );
@@ -764,99 +860,134 @@ export default function PatientDashboard() {
   };
 
   // ── Sidebar inner (shared between desktop + mobile drawer) ─────────────────
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      {/* Logo */}
-      <Link to="/" className="flex items-center gap-2.5 px-5 py-5 mb-4">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center shadow-md">
-          <Stethoscope className="w-4.5 h-4.5 text-white w-4 h-4" />
-        </div>
-        <div>
-          <p className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">
-            Panacea
-          </p>
-          <p className="text-[9px] tracking-widest text-slate-400 dark:text-slate-500">
-            PATIENT PORTAL
-          </p>
-        </div>
-      </Link>
+  // Inside PatientDashboard component, update the SidebarContent function:
 
-      {/* Patient avatar */}
-      <div className="mx-4 mb-6 p-3.5 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-slate-200 dark:border-slate-700/50 flex items-center gap-3">
-        <Avatar name={PATIENT.patient_name} size="sm" />
-        <div className="min-w-0">
-          <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-            {PATIENT.patient_name}
-          </p>
-          <p className="text-[10px] text-slate-400 dark:text-slate-500">
-            Patient · ID #4821
-          </p>
-        </div>
-      </div>
+  const SidebarContent = () => {
+    const { logout } = useAuth();
+    const [isSigningOut, setIsSigningOut] = useState(false);
 
-      {/* Nav items */}
-      <nav className="flex-1 px-3 space-y-1">
-        <p className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-600 px-3 mb-2">
-          Navigation
-        </p>
-        {TABS.map(({ id, label, Icon }) => {
-          const isActive = activeTab === id;
-          return (
-            <button
-              key={id}
-              onClick={() => {
-                setTab(id);
-                setSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                isActive
-                  ? "bg-gradient-to-r from-cyan-500/15 to-purple-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/40"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
-              }`}
-            >
-              <Icon
-                className={`w-4.5 h-4.5 w-4 h-4 shrink-0 ${isActive ? "text-cyan-500" : "text-slate-400"}`}
-              />
-              {label}
-              {isActive && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
-              )}
-            </button>
-          );
-        })}
-      </nav>
+    const handleSignOut = async () => {
+      if (isSigningOut) return;
 
-      {/* Bottom actions */}
-      <div className="px-3 pb-5 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition"
-        >
-          {dark ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-slate-400" />
-          )}
-          {dark ? "Light Mode" : "Dark Mode"}
-        </button>
-        <Link
-          to="/"
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition"
-        >
-          <LogOut className="w-4 h-4" /> Sign Out
+      setIsSigningOut(true);
+      try {
+        const data = await logout();
+        console.log("logged data; ", data);
+        showSuccess("User Logged Out Successfully");
+      } catch (error) {
+        console.error("Sign out failed:", error);
+        setIsSigningOut(false);
+        showError("Sign Out failed. Try again Later");
+      }
+    };
+
+    return (
+      <div className="flex flex-col h-full">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5 px-5 py-5 mb-4">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center shadow-md">
+            <Stethoscope className="w-4.5 h-4.5 text-white w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">
+              Panacea
+            </p>
+            <p className="text-[9px] tracking-widest text-slate-400 dark:text-slate-500">
+              PATIENT PORTAL
+            </p>
+          </div>
         </Link>
+
+        {/* Patient avatar */}
+        <div className="mx-4 mb-6 p-3.5 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-slate-200 dark:border-slate-700/50 flex items-center gap-3">
+          <Avatar name={user?.name} size="sm" />
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+              {user?.name}
+            </p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500">
+              Patient · ID#{user?.id}
+            </p>
+          </div>
+        </div>
+
+        {/* Nav items */}
+        <nav className="flex-1 px-3 space-y-1">
+          <p className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-600 px-3 mb-2">
+            Navigation
+          </p>
+          {TABS.map(({ id, label, Icon }) => {
+            const isActive = activeTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => {
+                  setTab(id);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
+                  isActive
+                    ? "bg-gradient-to-r from-cyan-500/15 to-purple-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/40"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white"
+                }`}
+              >
+                <Icon
+                  className={`w-4.5 h-4.5 w-4 h-4 shrink-0 ${isActive ? "text-cyan-500" : "text-slate-400"}`}
+                />
+                {label}
+                {isActive && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Bottom actions */}
+        <div className="px-3 pb-5 pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+          <button
+            onClick={toggleTheme}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition"
+          >
+            {dark ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-400" />
+            )}
+            {dark ? "Light Mode" : "Dark Mode"}
+          </button>
+
+          {/* Updated Sign Out button with loading state */}
+          <button
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSigningOut ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Signing out...
+              </>
+            ) : (
+              <>
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </>
+            )}
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans">
-      {/* ── DESKTOP SIDEBAR ──────────────────────────────────────────────────── */}
+      {/*  DESKTOP SIDEBAR */}
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-60 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-40">
         <SidebarContent />
       </aside>
 
-      {/* ── MOBILE DRAWER OVERLAY ─────────────────────────────────────────────── */}
+      {/* MOBILE DRAWER OVERLAY */}
       <AnimatePresence>
         {sidebarOpen && (
           <>
@@ -922,12 +1053,12 @@ export default function PatientDashboard() {
             {/* Patient chip */}
             <div className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
               <Avatar
-                name={PATIENT.patient_name}
+                name={user?.name}
                 size="sm"
                 className="w-7 h-7 text-[10px]"
               />
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden sm:inline">
-                {PATIENT.patient_name.split(" ")[0]}
+                {user?.name?.split(" ")[0]}
               </span>
             </div>
           </div>

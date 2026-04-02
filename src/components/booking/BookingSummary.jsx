@@ -9,7 +9,7 @@
  *   date         {string}        Selected YYYY-MM-DD or ""
  *   time         {string}        HH:MM:SS or ""
  *   serialNo     {number}
- *   patientId    {number}        Hardcoded until auth
+ *   patientName  {String}      
  */
 
 import { CalendarDays, Clock, Hash, MapPin, User, DollarSign, Info, Stethoscope } from "lucide-react";
@@ -33,7 +33,7 @@ function SummaryRow({ icon: Icon, label, value }) {
   );
 }
 
-const BookingSummary = ({ doctor, date, time, serialNo, patientId }) => {
+const BookingSummary = ({ doctor, date, time, serialNo, patientName }) => {
   const branch = (doctor?.branch?.location_details || doctor?.branch || "").replace(" Branch", "");
 
   return (
@@ -80,9 +80,9 @@ const BookingSummary = ({ doctor, date, time, serialNo, patientId }) => {
         <div>
           <SummaryRow icon={CalendarDays} label="Date"    value={date ? fmtDateLong(date) : undefined} />
           <SummaryRow icon={Clock}        label="Time"    value={time ? fmtTime(time)     : undefined} />
-          <SummaryRow icon={Hash}         label="Serial"  value={date && time ? `#${serialNo}` : undefined} />
+          <SummaryRow icon={Hash}         label="Serial"  value={date && time ? `##` : undefined} />
           <SummaryRow icon={MapPin}       label="Branch"  value={branch || undefined} />
-          <SummaryRow icon={User}         label="Patient" value={`Patient #${patientId}`} />
+          <SummaryRow icon={User}         label="Patient" value={`${patientName}`} />
         </div>
 
         {/* Fee */}

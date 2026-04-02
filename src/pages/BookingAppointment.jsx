@@ -27,7 +27,10 @@ import {
   Stethoscope, GraduationCap,
 } from "lucide-react";
 
+
+import { useAuth } from "../hooks/useAuth";
 import { useDoctors } from "../hooks/useDoctors";
+import { useAppointment } from "../hooks/useAppointment";
 import { dayName }    from "../utils/formatters";
 
 // Booking sub-components
@@ -36,11 +39,7 @@ import DatePicker         from "../components/booking/DatePicker";
 import AppointmentDetails from "../components/booking/AppointmentDetails";
 import BookingSummary     from "../components/booking/BookingSummary";
 import SuccessScreen      from "../components/booking/SuccessScreen";
-
-// ─── constants ────────────────────────────────────────────────────────────────
-
-// TODO: replace with req.user.patient_id once auth is implemented
-const PATIENT_ID = 1;
+import { showSuccess } from "../utils/toast";
 
 // ─── small local primitives (form-only, not shared) ───────────────────────────
 
@@ -93,6 +92,8 @@ const Booking = () => {
   const location  = useLocation();
   const preDoctor = location.state?.doctorId ? String(location.state.doctorId) : "";
 
+  const { user } = useAuth();
+  const { createAppointment } = useAppointment();
   const { doctors, loading: doctorsLoading } = useDoctors();
 
   // ── Form state ──────────────────────────────────────────────────────────────
@@ -101,6 +102,8 @@ const Booking = () => {
   const [errors,     setErrors]     = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted,  setSubmitted]  = useState(false);
+
+  const [serialNo, setSerialNo]     = useState(1);
 
   // ── Derived: selected doctor ────────────────────────────────────────────────
   const doctor = useMemo(
@@ -124,11 +127,8 @@ const Booking = () => {
     [schedules, date]
   );
 
-  const appointmentTime = matchedSchedule?.sc_time ?? "";
+  const appointmentTime = matchedSchedule?.doc_sc.time ?? "";
   const totalSlots      = matchedSchedule?.slots   ?? 0;
-
-  // TODO: replace with GET /api/appointments/count?doctorId=X&date=Y + 1
-  const serialNo = 1;
 
   // ── Validation ──────────────────────────────────────────────────────────────
   const validate = () => {
@@ -147,7 +147,7 @@ const Booking = () => {
     setSubmitting(true);
 
     const payload = {
-      patientID:        PATIENT_ID,
+      patientID:        Number(user.id),
       doctorID:         Number(doctorId),
       appointment_date: date,
       appointment_time: appointmentTime || "17:00:00",
@@ -155,13 +155,11 @@ const Booking = () => {
     };
 
     try {
-      const res = await fetch("/api/appointments", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Server error");
+      const data = await createAppointment(payload);
+      if (!data.success) throw new Error("Server error");
+      setSerialNo(data.payload.serial_no);
       setSubmitted(true);
+      showSuccess(data?.message);
     } catch {
       setErrors((prev) => ({ ...prev, submit: "Booking failed. Please try again." }));
     } finally {
@@ -182,6 +180,7 @@ const Booking = () => {
       <SuccessScreen
         doctorName={doctor?.doctor_name ?? ""}
         date={date}
+        serialNo={serialNo}
         time={appointmentTime}
         onBookAnother={resetForm}
       />
@@ -219,17 +218,17 @@ const Booking = () => {
         </motion.div>
 
         {/* Auth notice */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, delay: 0.05 }}
           className="flex items-start gap-3 px-4 py-3 mb-6 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/40"
         >
           <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
           <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
-            Booking as <span className="font-bold">Patient #{PATIENT_ID}</span>.
+            Booking as <span className="font-bold">Patient #{user?.name}</span>.
             Once authentication is added, this will automatically use your account.
           </p>
-        </motion.div>
+        </motion.div> */}
 
         {/* Two-column layout */}
         <div className="grid lg:grid-cols-5 gap-6 items-start">
@@ -383,7 +382,7 @@ const Booking = () => {
                 date={date}
                 time={appointmentTime}
                 serialNo={serialNo}
-                patientId={PATIENT_ID}
+                patientName={user?.name}
               />
             </motion.div>
           </div>

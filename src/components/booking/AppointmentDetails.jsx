@@ -45,7 +45,7 @@ const AppointmentDetails = ({ time, serialNo, totalSlots }) => {
               Your Serial No.
             </p>
             <p className="text-sm font-bold text-slate-900 dark:text-white">
-              #{serialNo}
+              ##
             </p>
           </div>
         </div>
