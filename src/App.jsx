@@ -33,7 +33,6 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/booking" element={<Booking />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/services" element={<Services />} />
           <Route path="/doctors" element={<DoctorsList />} />
@@ -56,6 +55,7 @@ function App() {
         <Route element={<DashboardLayout />}>
 
           <Route element={<ProtectedRoute allowedRoles={["patient"]} />}>
+            <Route path="/booking" element={<Booking />} />
             <Route path="/patient/dashboard" element={<PatientDashboard />} />
           </Route>
           <Route element={<ProtectedRoute allowedRoles={["doctor"]} />}>
